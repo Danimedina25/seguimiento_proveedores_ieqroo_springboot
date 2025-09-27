@@ -4,6 +4,7 @@ import mx.ieqroo.control_proveedores.instrucciones_pago.model.InstruccionPago;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,5 +27,5 @@ public interface InstruccionPagoRepository extends JpaRepository<InstruccionPago
     List<InstruccionPago> findByIdentificadorUr(String identificadorUr);
 
     // Buscar todas las instrucciones entre dos fechas de factura
-    List<InstruccionPago> findByFechaFacturaBetween(java.sql.Date fechaInicio, java.sql.Date fechaFin);
+    List<InstruccionPago> findByFechaFacturaBetween(LocalDate fechaInicio, LocalDate fechaFin);
 }

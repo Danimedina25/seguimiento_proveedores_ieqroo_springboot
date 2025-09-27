@@ -92,6 +92,20 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
+        <!-- MapStruct principal -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.5.5.Final</version>
+        </dependency>
+
+        <!-- Procesador de anotaciones de MapStruct (para generar código en compile time) -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>1.5.5.Final</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

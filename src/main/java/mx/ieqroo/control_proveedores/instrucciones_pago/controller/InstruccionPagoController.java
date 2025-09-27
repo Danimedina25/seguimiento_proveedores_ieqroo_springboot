@@ -1,13 +1,15 @@
 package mx.ieqroo.control_proveedores.instrucciones_pago.controller;
 
+import mx.ieqroo.control_proveedores.instrucciones_pago.dto.InstruccionPagoRequest;
 import mx.ieqroo.control_proveedores.instrucciones_pago.model.InstruccionPago;
 import mx.ieqroo.control_proveedores.instrucciones_pago.service.InstruccionPagoService;
 import mx.ieqroo.control_proveedores.shared.dto.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,16 +20,32 @@ public class InstruccionPagoController {
     @Autowired
     private InstruccionPagoService instruccionPagoService;
 
-    // Crear o actualizar una instrucción
-    @PostMapping
-    public ResponseEntity<ApiResponse<InstruccionPago>> guardar(@RequestBody InstruccionPago instruccionPago) {
-        InstruccionPago guardada = instruccionPagoService.guardarInstruccion(instruccionPago);
+    // Crear o actualizar una instrucción usando DTO
+    @PostMapping("/nueva")
+    public ResponseEntity<ApiResponse<InstruccionPago>> guardar(
+            @RequestBody InstruccionPagoRequest instruccionPagoRequest
+    ) {
+        InstruccionPago guardada = instruccionPagoService.guardarInstruccion(instruccionPagoRequest);
         return ResponseEntity.ok(
                 new ApiResponse<>(true, "Instrucción de pago guardada exitosamente", guardada, null)
         );
     }
 
-    // Obtener todas
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<InstruccionPago>> actualizar(
+            @PathVariable Integer id,
+            @RequestBody InstruccionPagoRequest instruccionPagoRequest
+    ) {
+        Optional<InstruccionPago> actualizada = instruccionPagoService.actualizarInstruccion(id, instruccionPagoRequest);
+        return actualizada.map(value -> ResponseEntity.ok(
+                        new ApiResponse<>(true, "Instrucción actualizada exitosamente", value, null)
+                ))
+                .orElseGet(() -> ResponseEntity.status(404).body(
+                        new ApiResponse<>(false, "No se encontró la instrucción con ID: " + id, null, null)
+                ));
+    }
+
+    // Obtener todas las instrucciones
     @GetMapping
     public ResponseEntity<ApiResponse<List<InstruccionPago>>> obtenerTodas() {
         List<InstruccionPago> lista = instruccionPagoService.obtenerTodas();
@@ -75,11 +93,11 @@ public class InstruccionPagoController {
         );
     }
 
-    // Buscar entre fechas
+    // Buscar entre fechas usando LocalDate y formato yyyy-MM-dd
     @GetMapping("/fecha")
     public ResponseEntity<ApiResponse<List<InstruccionPago>>> obtenerPorRangoFechas(
-            @RequestParam Date inicio,
-            @RequestParam Date fin
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin
     ) {
         List<InstruccionPago> lista = instruccionPagoService.obtenerPorRangoFechas(inicio, fin);
         return ResponseEntity.ok(
